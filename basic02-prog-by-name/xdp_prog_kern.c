@@ -17,6 +17,12 @@
 SEC("xdp")
 int  xdp_pass_func(struct xdp_md *ctx)
 {
+        int ingress_ifindex = ctx->ingress_ifindex;
+        // int egress_ifindex = ctx->egress_ifindex;
+        char ingress_outstr[] = "ingress_index is %d";
+        // char egress_ourstr[] = "egress_index is %d";
+        bpf_trace_printk(ingress_outstr,sizeof(ingress_outstr),ingress_ifindex);
+        // bpf_trace_printk(egress_ourstr,sizeof(egress_ourstr),egress_ifindex);
 	return XDP_PASS;
 }
 
@@ -27,7 +33,11 @@ int  xdp_drop_func(struct xdp_md *ctx)
 }
 
 /* Assignment#2: Add new XDP program section that use XDP_ABORTED */
-
+SEC("xdp")
+int  xdp_abort_func(struct xdp_md *ctx)
+{
+        return XDP_ABORTED;
+}
 char _license[] SEC("license") = "GPL";
 
 /* Hint the avail XDP action return codes are:
